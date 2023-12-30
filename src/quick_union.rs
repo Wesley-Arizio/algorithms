@@ -1,12 +1,12 @@
 #[derive(Debug)]
 pub struct QuickUnion {
-    pub ids: Vec<u32>
+    pub ids: Vec<u32>,
 }
 
 impl QuickUnion {
     pub fn new(len: u32) -> Self {
         Self {
-            ids: (0..len).collect()
+            ids: (0..len).collect(),
         }
     }
 
@@ -23,7 +23,7 @@ impl QuickUnion {
         self.root(p) == self.root(q)
     }
 
-    pub fn union(&mut self, p: u32, q: u32)  {
+    pub fn union(&mut self, p: u32, q: u32) {
         let root_p = self.root(p);
         let root_q = self.root(q);
 

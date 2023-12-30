@@ -8,14 +8,14 @@
 #[derive(Debug)]
 pub struct WeightedQuickUnion {
     pub ids: Vec<u32>,
-    pub sizes: Vec<u32>
+    pub sizes: Vec<u32>,
 }
 
 impl WeightedQuickUnion {
     pub fn new(len: u32) -> Self {
         Self {
             ids: (0..len).collect(),
-            sizes: vec![1; len as usize]
+            sizes: vec![1; len as usize],
         }
     }
 
@@ -32,11 +32,13 @@ impl WeightedQuickUnion {
         self.root(p) == self.root(q)
     }
 
-    pub fn union(&mut self, p: u32, q: u32)  {
+    pub fn union(&mut self, p: u32, q: u32) {
         let root_p = self.root(p) as usize;
         let root_q = self.root(q) as usize;
 
-        if root_q == root_p { return };
+        if root_q == root_p {
+            return;
+        };
         if &self.sizes[root_p] < &self.sizes[root_q] {
             self.ids[root_p] = root_q as u32;
             self.sizes[root_q] += self.sizes[root_p];
@@ -65,7 +67,7 @@ mod test {
         quick_union.union(2, 1);
 
         let root_1 = quick_union.root(1);
-        assert_eq!(root_2, 2);
+        assert_eq!(root_1, 2);
 
         let root_2 = quick_union.root(2);
         assert_eq!(root_2, 2);
