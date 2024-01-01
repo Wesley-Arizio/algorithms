@@ -1,4 +1,3 @@
-
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -15,10 +14,7 @@ impl<T: Eq + PartialEq> PartialEq for Node<T> {
 }
 
 impl<T> Node<T> {
-    pub fn new(
-        value: T,
-        next: Option<Rc<RefCell<Node<T>>>>,
-    ) -> Node<T> {
+    pub fn new(value: T, next: Option<Rc<RefCell<Node<T>>>>) -> Node<T> {
         Self { value, next }
     }
 }
@@ -28,16 +24,16 @@ pub struct LinkedList<T> {
     pub head: Option<Rc<RefCell<Node<T>>>>,
 }
 
-impl<T> LinkedList<T> {
+impl<T> LinkedList<T>
+where
+    T: PartialEq,
+{
     pub fn new() -> Self {
         Self { head: None }
     }
 
     pub fn add_head(&mut self, value: T) {
-        let new_node = Rc::new(RefCell::new(Node {
-            value,
-            next: None,
-        }));
+        let new_node = Rc::new(RefCell::new(Node { value, next: None }));
 
         match self.head.take() {
             Some(old_head) => {
@@ -51,6 +47,18 @@ impl<T> LinkedList<T> {
     }
     pub fn is_empty(&self) -> bool {
         self.head.is_none()
+    }
+
+    pub fn find(&self, value: T) -> Option<Rc<RefCell<Node<T>>>> {
+        let mut head = self.head.clone();
+        while let Some(cur) = head {
+            if cur.borrow().value == value {
+                return Some(Rc::clone(&cur));
+            };
+            head = cur.borrow().next.clone();
+        }
+
+        None
     }
 }
 
@@ -112,5 +120,26 @@ mod tests {
                 .next,
             None
         );
+        let result = node.find(1);
+        assert_eq!(result.as_ref().unwrap().borrow().value, 1);
+        assert_eq!(result.as_ref().unwrap().borrow().next, None);
+
+        let result = node.find(2);
+        assert_eq!(result.as_ref().unwrap().borrow().value, 2);
+        assert_eq!(
+            result
+                .as_ref()
+                .unwrap()
+                .borrow()
+                .next
+                .as_ref()
+                .unwrap()
+                .borrow()
+                .value,
+            1
+        );
+
+        let result = node.find(100);
+        assert!(result.is_none());
     }
 }
