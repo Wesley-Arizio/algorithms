@@ -60,6 +60,10 @@ where
 
         None
     }
+
+    pub fn contains(&self, value: T) -> bool {
+        self.find(value).is_some()
+    }
 }
 
 #[cfg(test)]
@@ -141,5 +145,8 @@ mod tests {
 
         let result = node.find(100);
         assert!(result.is_none());
+
+        assert!(node.contains(1));
+        assert!(!node.contains(1000));
     }
 }
